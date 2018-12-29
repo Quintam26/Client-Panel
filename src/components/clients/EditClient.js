@@ -1,51 +1,57 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-// import { compose } from 'redux';
-// import { connect } from 'react-redux';
+import { compose } from "redux";
+import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
+import Spinner from "../layout/Spinner";
 
-class AddClient extends Component {
-  state = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    balance: ""
+class EditClient extends Component {
+
+  constructor(props) {
+    super(props);
+    //create refs
+    this.firstNameInput = React.createRef();
+    this.lastNameInput = React.createRef();
+    this.emailInput = React.createRef();
+    this.phoneInput = React.createRef();
+    this.balanceInput = React.createRef();
   };
 
   onSubmit = e => {
     e.preventDefault();
 
-    const newClient = this.state;
-
-    const { firestore, history } = this.props;
-
-    //If no balance, make 0
-    if (newClient.balance === "") {
-      newClient.balance = 0;
+    const { client, firestore, history } = this.props;
+    
+    //Updated client
+    const updClient = {
+      firstName: this.firstNameInput.current.value,
+      lastName: this.lastNameInput.current.value,
+      email: this.emailInput.current.value,
+      phone: this.phoneInput.current.value,
+      balance: this.balanceInput.current.value === '' ? 0 : this.balanceInput.current.value
     }
 
-    firestore
-      .add({ collection: "clients" }, newClient)
-      .then(() => history.push("/"));
+    //Update client in firestore
+    firestore.update({ collection: 'clients', doc: client.id }, updClient).then(history.push('/'));
   };
 
-  onChange = e => this.setState({ [e.target.name]: e.target.value });
-
   render() {
-    return (
-      <div>
+    const { client } = this.props;
+
+    if(client) {
+      return (
+        <div>
         <div className="row">
           <div className="col-md-6">
             <Link to="/" className="btn btn-link">
-              <i className="fas fa-arrow-circle-left">Back to Dashboard</i>
+              <i className="fas fa-arrow-circle-left">Back To Dashboard</i>
             </Link>
           </div>
         </div>
 
         <div className="card">
-          <div className="card-header">Add Client</div>
+          <div className="card-header">Edit Client</div>
           <div className="card-body">
             <form onSubmit={this.onSubmit}>
               <div className="form-group">
@@ -55,8 +61,8 @@ class AddClient extends Component {
                   className="form-control"
                   name="firstName"
                   minLength="2"
-                  onChange={this.onChange}
-                  value={this.state.firstName}
+                  defaultValue={client.firstName}
+                  ref={this.firstNameInput}
                   required
                 />
               </div>
@@ -68,8 +74,8 @@ class AddClient extends Component {
                   className="form-control"
                   name="lastName"
                   minLength="2"
-                  onChange={this.onChange}
-                  value={this.state.lastName}
+                  defaultValue={client.lastName}
+                  ref={this.lastNameInput}
                   required
                 />
               </div>
@@ -81,8 +87,8 @@ class AddClient extends Component {
                   className="form-control"
                   name="email"
                   minLength="2"
-                  onChange={this.onChange}
-                  value={this.state.email}
+                  defaultValue={client.email}
+                  ref={this.emailInput}
                 />
               </div>
 
@@ -93,8 +99,8 @@ class AddClient extends Component {
                   className="form-control"
                   name="phone"
                   minLength="10"
-                  onChange={this.onChange}
-                  value={this.state.phone}
+                  defaultValue={client.phone}
+                  ref={this.phoneInput}
                   required
                 />
               </div>
@@ -105,8 +111,8 @@ class AddClient extends Component {
                   type="text"
                   className="form-control"
                   name="balance"
-                  onChange={this.onChange}
-                  value={this.state.balance}
+                  defaultValue={client.balance}
+                  ref={this.balanceInput}
                 />
               </div>
               <input
@@ -118,12 +124,22 @@ class AddClient extends Component {
           </div>
         </div>
       </div>
-    );
+      );
+    } else {
+      return <Spinner />;
+    }
   }
-}
+};
 
-AddClient.propTypes = {
+EditClient.propTypes = {
   firestore: PropTypes.object.isRequired
 };
 
-export default firestoreConnect()(AddClient);
+export default compose(
+  firestoreConnect(props => [
+    { collection: "clients", storeAs: "client", doc: props.match.params.id }
+  ]),
+  connect(({ firestore: { ordered } }, props) => ({
+    client: ordered.client && ordered.client[0]
+  }))
+)(EditClient);

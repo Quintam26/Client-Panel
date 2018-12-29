@@ -7,6 +7,7 @@ import ClientDetails from "./components/clients/ClientDetails";
 import { Provider } from "react-redux";
 import store from "./store";
 import "./App.css";
+import EditClient from "./components/clients/EditClient";
 
 class App extends Component {
   render() {
@@ -19,6 +20,7 @@ class App extends Component {
               <Switch>
                 <Route exact path="/" component={Dashboard} />
                 <Route exact path="/client/add" component={AddClient} />
+                <Route exact path="/client/edit/:id" component={EditClient} />
                 <Route exact path="/client/:id" component={ClientDetails} />
               </Switch>
             </div>
