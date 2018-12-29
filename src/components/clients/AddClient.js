@@ -1,21 +1,20 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 // import { compose } from 'redux';
 // import { connect } from 'react-redux';
-import { firestoreConnect } from 'react-redux-firebase';
+import { firestoreConnect } from "react-redux-firebase";
 
 class AddClient extends Component {
-
   state = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    balance: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    balance: ""
   };
 
-  onSubmit = (e) => {
+  onSubmit = e => {
     e.preventDefault();
 
     const newClient = this.state;
@@ -23,22 +22,24 @@ class AddClient extends Component {
     const { firestore, history } = this.props;
 
     //If no obalance, make 0
-    if(newClient.balance === '') {
+    if (newClient.balance === "") {
       newClient.balance = 0;
     }
 
-    firestore.add({ collection: 'clients' }, newClient).then(() => history.push('/'));
+    firestore
+      .add({ collection: "clients" }, newClient)
+      .then(() => history.push("/"));
   };
 
-  onChange = (e) => this.setState({ [e.target.name]: e.target.value });
-  
+  onChange = e => this.setState({ [e.target.name]: e.target.value });
+
   render() {
     return (
       <div>
         <div className="row">
           <div className="col-md-6">
             <Link to="/" className="btn btn-link">
-              <i className="fas fa-arrow-circle-left">Back to Dashboard</i> 
+              <i className="fas fa-arrow-circle-left">Back to Dashboard</i>
             </Link>
           </div>
         </div>
@@ -49,36 +50,77 @@ class AddClient extends Component {
             <form onSubmit={this.onSubmit}>
               <div className="form-group">
                 <label htmlFor="firstName">First Name</label>
-                <input type="text" className="form-control" name="firstName" minLength="2" onChange={this.onChange} value={this.state.firstName} required/>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="firstName"
+                  minLength="2"
+                  onChange={this.onChange}
+                  value={this.state.firstName}
+                  required
+                />
               </div>
 
               <div className="form-group">
                 <label htmlFor="lastName">Last Name</label>
-                <input type="text" className="form-control" name="lastName" minLength="2" onChange={this.onChange} value={this.state.lastName} required/>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="lastName"
+                  minLength="2"
+                  onChange={this.onChange}
+                  value={this.state.lastName}
+                  required
+                />
               </div>
 
               <div className="form-group">
                 <label htmlFor="email">Email</label>
-                <input type="email" className="form-control" name="email" minLength="2" onChange={this.onChange} value={this.state.email}/>
+                <input
+                  type="email"
+                  className="form-control"
+                  name="email"
+                  minLength="2"
+                  onChange={this.onChange}
+                  value={this.state.email}
+                />
               </div>
 
               <div className="form-group">
                 <label htmlFor="phone">Phone</label>
-                <input type="text" className="form-control" name="phone" minLength="10" onChange={this.onChange} value={this.state.phone} required/>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="phone"
+                  minLength="10"
+                  onChange={this.onChange}
+                  value={this.state.phone}
+                  required
+                />
               </div>
 
               <div className="form-group">
                 <label htmlFor="balance">Balance</label>
-                <input type="text" className="form-control" name="balance" onChange={this.onChange} value={this.state.balance}/>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="balance"
+                  onChange={this.onChange}
+                  value={this.state.balance}
+                />
               </div>
-              <input type="submit" value="Submit" className="btn btn-primary btn-block"/>
+              <input
+                type="submit"
+                value="Submit"
+                className="btn btn-primary btn-block"
+              />
             </form>
           </div>
         </div>
       </div>
-    )
+    );
   }
-};
+}
 
 AddClient.propTypes = {
   firestore: PropTypes.object.isRequired
