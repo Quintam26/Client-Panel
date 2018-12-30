@@ -4,6 +4,8 @@ import { UserIsAuthenticated, UserIsNotAuthenticated } from './helpers/auth';
 import AppNavbar from "./components/layout/AppNavbar";
 import Dashboard from "./components/layout/Dashboard";
 import Login from "./components/auth/Login";
+import Register from "./components/auth/Register";
+import Settings from "./components/settings/Settings";
 import AddClient from "./components/clients/AddClient";
 import ClientDetails from "./components/clients/ClientDetails";
 import { Provider } from "react-redux";
@@ -21,7 +23,9 @@ class App extends Component {
             <div className="container">
               <Switch>
                 <Route exact path="/" component={UserIsAuthenticated(Dashboard)} />
+                <Route exact path="/settings" component={UserIsAuthenticated(Settings)} />
                 <Route exact path="/login" component={UserIsNotAuthenticated(Login)} />
+                <Route exact path="/register" component={UserIsNotAuthenticated(Register)} />
                 <Route exact path="/client/add" component={UserIsAuthenticated(AddClient)} />
                 <Route exact path="/client/edit/:id" component={UserIsAuthenticated(EditClient)} />
                 <Route exact path="/client/:id" component={UserIsAuthenticated(ClientDetails)} />
